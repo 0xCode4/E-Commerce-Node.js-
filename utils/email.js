@@ -6,11 +6,14 @@ const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
-    secure: true,
+    secure: process.env.EMAIL_PORT == 465,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
   });
   // 2) define some options (from to )
   const mailOptions = {
@@ -21,7 +24,7 @@ const sendEmail = async (options) => {
   };
 
   // 3) send email
-  await transporter.sendMail(mailOptions)
+  await transporter.sendMail(mailOptions);
 };
 
 module.exports = sendEmail;

@@ -5,7 +5,7 @@ info:
   description: E-Shop REST API documentation (matched to routes)
 
 servers:
-  - url: https://eshop-dev.up.railway.app
+  - url: https://eshop-dev.up.railway.app/api-docs
     description: Production
   - url: http://localhost:8000
     description: Local
@@ -192,6 +192,7 @@ paths:
                 name: { type: string }
                 email: { type: string }
                 password: { type: string }
+                passwordConfirm: { type: string }
       responses:
         "201":
           content:
@@ -243,8 +244,8 @@ paths:
             schema:
               type: object
               properties:
-                code: { type: string }
-                email: { type: string }
+                resetCode: { type: string }
+
       responses:
         "200": { description: ok }
 
@@ -259,8 +260,8 @@ paths:
               type: object
               properties:
                 email: { type: string }
-                code: { type: string }
-                password: { type: string }
+                newPassword: { type: string }
+
       responses:
         "200": { description: password updated }
 
