@@ -34,7 +34,7 @@ A complete **E-Commerce REST API** built with **Node.js**, **Express**, and **Mo
 
 | Environment | URL |
 |-------------|-----|
-| **Production** | https://e-shop-0c.up.railway.app |
+| **Production** | https://eshop-dev.up.railway.app/api-docs |
 
 > ⚠️ If Swagger does not load, verify that you used the correct base path  
 > Example: `/api/v1` (avoid mistakes like `/aip/v1`)
