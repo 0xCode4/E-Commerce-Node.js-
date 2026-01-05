@@ -5,8 +5,8 @@ const AppError = require("../utils/appError");
 const User = require("../models/userModel");
 
 
-exports.getLoggedUserAddress= asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user._id).populate({path: 'addresses'})
+exports.getLoggedUserAddress = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.user._id).populate({ path: 'addresses' })
     res.status(200).json({
         status: 'success',
         data: user.addresses
@@ -15,8 +15,8 @@ exports.getLoggedUserAddress= asyncHandler(async (req, res, next) => {
 
 exports.addUserAddress = asyncHandler(async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.user._id, {
-        $addToSet: {addresses: req.body}
-    }, {new: true})
+        $addToSet: { addresses: req.body }
+    }, { new: true })
 
     res.status(200).json({
         status: 'success',
@@ -28,7 +28,7 @@ exports.addUserAddress = asyncHandler(async (req, res, next) => {
 
 exports.removeFromAddresses = asyncHandler(async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.user._id, {
-        $pull: {addresses: {_id :req.params.id}}
+        $pull: { addresses: { _id: req.params.id } }
     })
 
     res.status(200).json({

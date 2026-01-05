@@ -2,7 +2,7 @@ const path = require('path')
 const express = require('express')
 const dotenv = require('dotenv')
 const morgan = require('morgan')
-dotenv.config({path: 'config.env'})
+dotenv.config({ path: 'config.env' })
 const dbConnection = require('./config/database')
 const GlobalError = require('./middlewares/globalError')
 const AppError = require('./utils/appError')
@@ -16,7 +16,7 @@ const xss = require('xss');
 
 
 const mountRoutes = require('./routes/index')
-const {webhookCheckout} = require('./controllers/orderController')
+const { webhookCheckout } = require('./controllers/orderController')
 // DB Connection
 dbConnection()
 
@@ -27,7 +27,7 @@ const app = express()
 
 
 
-const swaggerDocs = require('./swagger/swaggerDoc') 
+const swaggerDocs = require('./swagger/swaggerDoc')
 swaggerDocs(app)
 
 
@@ -40,18 +40,18 @@ app.use(compression())
 
 
 // Checkout Webhook
-app.post('/webhook-checkout', express.raw({type: 'application/json'}), webhookCheckout)
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), webhookCheckout)
 
 // Middlewares
 
 // set request size limit to 20kb
-app.use(express.json({limit: '20kb'}))
+app.use(express.json({ limit: '20kb' }))
 
 
 // middleware to protect against HTTP Parameter Pollution attacks
 app.use(hpp({
     // for testing
-    whitelist : [ 'price', 'sold', 'quantity', 'ratingsAverage', 'ratingsQuantity']
+    whitelist: ['price', 'sold', 'quantity', 'ratingsAverage', 'ratingsQuantity']
 }))
 
 
@@ -59,36 +59,36 @@ app.use(hpp({
 
 // prevent scripts
 app.use((req, res, next) => {
-    if(req.body) {
+    if (req.body) {
         for (const key in req.body) {
-            if(typeof req.body[key] === 'string') {
+            if (typeof req.body[key] === 'string') {
                 req.body[key] = xss(req.body[key])
             }
         }
     }
     if (req.query) {
         for (const key in req.query) {
-             if (typeof req.query[key] === 'string') {
+            if (typeof req.query[key] === 'string') {
                 req.query[key] = xss(req.query[key]);
             }
         }
     }
-    
+
     next();
 })
 
 // to prevent no sql query injection
 app.use((req, res, next) => {
     if (req.body) {
-        req.body = mongoSanitize(req.body); 
+        req.body = mongoSanitize(req.body);
     }
     next();
 });
 
 // Limit each IP to 100 requests per `window` (here, per 15 minutes).
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
-    limit: 100, 
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
     message: 'Too Many Requests from this IP, Please try again in 15 minutes',
 })
 
@@ -98,7 +98,7 @@ app.use('/api', limiter)
 
 app.use(express.static(path.join(__dirname, 'uploads')))
 
-if(process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
     // console.log(`The Current Mode is: ${process.env.NODE_ENV}`);
 }
@@ -108,7 +108,7 @@ if(process.env.NODE_ENV === 'development') {
 mountRoutes(app)
 
 app.use((req, res, next) => {
-    next(new AppError(`Can\'t find this route: ${req.originalUrl}`, 400))
+    next(new AppError(`Can\'t find this route: ${req.originalUrl}`, 404))
 })
 
 

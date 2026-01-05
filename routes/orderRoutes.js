@@ -14,21 +14,46 @@ const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect);
-
-router.get('/checkout-session/:id', restrictTo('user'), checkOutSession)
+router.get(
+  "/checkout-session/:id",
+  protect,
+  restrictTo("user"),
+  checkOutSession
+);
 
 router
   .route("/")
   .get(
+    protect,
     restrictTo("admin", "manager", "user"),
     getAllOrdersForLoggedUser,
     getAllOrders
   )
-  .post(restrictTo("user"), createCashOrder);
+  .post(
+    protect,
+    restrictTo("user"),
+    createCashOrder
+  );
 
-router.route("/:id").get(getOrder);
-router.patch('/:id/pay', restrictTo('admin', 'manager'), updateOrderToPaid)
-router.patch('/:id/deliver', restrictTo('admin', 'manager'), updateOrderToDelivered)
+router.get(
+  "/:id",
+  protect,
+  restrictTo("admin", "manager", "user"),
+  getOrder
+);
+
+router.patch(
+  "/:id/pay",
+  protect,
+  restrictTo("admin", "manager"),
+  updateOrderToPaid
+);
+
+router.patch(
+  "/:id/deliver",
+  protect,
+  restrictTo("admin", "manager"),
+  updateOrderToDelivered
+);
 
 module.exports = router;

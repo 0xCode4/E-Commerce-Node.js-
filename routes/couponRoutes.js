@@ -11,11 +11,15 @@ const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect, restrictTo("admin", "manager"));
+router
+  .route("/")
+  .get(protect, restrictTo("admin", "manager"), getCoupons)
+  .post(protect, restrictTo("admin", "manager"), createCoupon);
 
-
-router.route("/").get(getCoupons).post(createCoupon);
-
-router.route("/:id").get(getCoupon).patch(updateCoupon).delete(deleteCoupon);
+router
+  .route("/:id")
+  .get(protect, restrictTo("admin", "manager"), getCoupon)
+  .patch(protect, restrictTo("admin", "manager"), updateCoupon)
+  .delete(protect, restrictTo("admin", "manager"), deleteCoupon);
 
 module.exports = router;

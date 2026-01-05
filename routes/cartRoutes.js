@@ -12,16 +12,22 @@ const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect, restrictTo("user"));
-
 router
   .route("/")
-  .get(getLoggedUserCart)
-  .post(addProductToCart)
-  .delete(removeAllCartItems);
+  .get(protect, restrictTo("user"), getLoggedUserCart)
+  .post(protect, restrictTo("user"), addProductToCart)
+  .delete(protect, restrictTo("user"), removeAllCartItems);
 
-router.patch("/applyCoupon", applyCoupon);
+router.patch(
+  "/applyCoupon",
+  protect,
+  restrictTo("user"),
+  applyCoupon
+);
 
-router.route("/:id").delete(removeCartItem).patch(updateCartItemQuantity);
+router
+  .route("/:id")
+  .delete(protect, restrictTo("user"), removeCartItem)
+  .patch(protect, restrictTo("user"), updateCartItemQuantity);
 
 module.exports = router;

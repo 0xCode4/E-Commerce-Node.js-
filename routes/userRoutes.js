@@ -27,18 +27,16 @@ const { protect, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
-router.use(protect);
-
-
-router.get("/getMe", getLoggedUser, getUser);
-router.patch("/updateMyPassword", updateLoggedUserPassword);
-router.patch("/updateMyData", updateLoggedUserValidator, updateLoggedUserData);
-router.delete("/deleteMe", deleteLoggedUser);
+router.get("/getMe", protect, getLoggedUser, getUser);
+router.patch("/updateMyPassword", protect, updateLoggedUserPassword);
+router.patch("/updateMyData", protect, updateLoggedUserValidator, updateLoggedUserData);
+router.delete("/deleteMe", protect, deleteLoggedUser);
 
 router
   .route("/")
-  .get(restrictTo("admin", "manager"), getUsers)
+  .get(protect, restrictTo("admin", "manager"), getUsers)
   .post(
+    protect,
     restrictTo("admin"),
     uploadUserProfileImg,
     resizeImage,
@@ -48,15 +46,27 @@ router
 
 router
   .route("/:id")
-  .get(restrictTo("admin"), getUserValidator, getUser)
+  .get(protect, restrictTo("admin"), getUserValidator, getUser)
   .patch(
+    protect,
     restrictTo("admin"),
     uploadUserProfileImg,
     resizeImage,
     updateUserValidator,
     updateUser
   )
-  .delete(restrictTo("admin"), deleteUserValidator, deleteUser);
-router.patch("/updatePassword/:id", updatePasswordValidator, updatePassword);
+  .delete(
+    protect,
+    restrictTo("admin"),
+    deleteUserValidator,
+    deleteUser
+  );
+
+router.patch(
+  "/updatePassword/:id",
+  protect,
+  updatePasswordValidator,
+  updatePassword
+);
 
 module.exports = router;
